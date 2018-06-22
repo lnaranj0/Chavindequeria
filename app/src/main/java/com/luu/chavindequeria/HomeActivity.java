@@ -1,14 +1,12 @@
 package com.luu.chavindequeria;
 
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,29 +17,26 @@ import android.widget.Toast;
 
 
 import com.luu.chavindequeria.utils.CrossfadeWrapper;
+
 import com.mikepenz.crossfader.Crossfader;
-import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.MiniDrawer;
 import com.mikepenz.materialdrawer.holder.BadgeStyle;
-import com.mikepenz.materialdrawer.interfaces.ICrossfader;
 import com.mikepenz.materialdrawer.interfaces.OnCheckedChangeListener;
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
-import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem;
-import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
-import com.mikepenz.materialdrawer.model.SectionDrawerItem;
-import com.mikepenz.materialdrawer.model.SwitchDrawerItem;
-import com.mikepenz.materialdrawer.model.ToggleDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.mikepenz.materialdrawer.model.interfaces.Nameable;
 import com.mikepenz.materialize.util.SystemUtils;
 import com.mikepenz.materialize.util.UIUtils;
+
+import fragment.AgregarPedidosFragment;
+import fragment.VerPedidosFragment;
 
 public class HomeActivity extends AppCompatActivity {
     private static final int PROFILE_SETTING = 1;
@@ -57,13 +52,20 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
+/*
         //Handle Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(R.string.nombreBarra);
+        getSupportActionBar().setTitle(R.string.nombreBarra); */
+
+
+        if(savedInstanceState == null){
+            Fragment f = AgregarPedidosFragment.newInstance("Agregar Pedidos");
+            getSupportFragmentManager().beginTransaction().replace(R.id.crossfade_content,f).commit();
+        }
+
 
         final IProfile profile = new ProfileDrawerItem().withName("Luu Naranjo").withEmail("lagos_2_5@hotmail.com").withIcon(R.drawable.lu_nuevo);
 
@@ -80,14 +82,14 @@ public class HomeActivity extends AppCompatActivity {
 
         result = new DrawerBuilder()
                 .withActivity(this)
-                .withToolbar(toolbar)
+                //.withToolbar(toolbar)
                 .withTranslucentStatusBar(false)
                 .withAccountHeader(headerResult)
                 .addDrawerItems(
-                        new PrimaryDrawerItem().withName("Agregar Pedido").withIcon(R.drawable.food).withIdentifier(1),
-                        new PrimaryDrawerItem().withName("Ver Pedidos").withIcon(R.drawable.tv).withBadgeStyle(new BadgeStyle(Color.RED, Color.RED)).withIdentifier(2).withSelectable(false),
+                        new PrimaryDrawerItem().withName("Agregar Pedido").withIcon(R.drawable.restaurant).withIdentifier(1),
+                        new PrimaryDrawerItem().withName("Ver Pedidos").withIcon(R.drawable.monitor).withIdentifier(2),
                         new PrimaryDrawerItem().withName("Cuenta").withIcon(R.drawable.payment).withIdentifier(3),
-                        new PrimaryDrawerItem().withName("Clientes").withIcon(R.drawable.man_user).withIdentifier(4),
+                        new PrimaryDrawerItem().withName("Clientes").withIcon(R.drawable.specialist_user).withIdentifier(4),
                         new DividerDrawerItem(),
                         new PrimaryDrawerItem().withName("Ajustes").withIcon(R.drawable.settings).withIdentifier(5)
                 )
@@ -95,7 +97,17 @@ public class HomeActivity extends AppCompatActivity {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
                         if(drawerItem instanceof Nameable){
-                            Toast.makeText(getApplicationContext(),((Nameable) drawerItem).getName().getText(HomeActivity.this),Toast.LENGTH_LONG).show();
+
+                            switch ( ((Nameable) drawerItem).getName().getText(getApplicationContext()) ){
+                                case "Agregar Pedido":
+                                    Fragment f = AgregarPedidosFragment.newInstance("Agregar Pedidos");
+                                    getSupportFragmentManager().beginTransaction().replace(R.id.crossfade_content,f).commit();
+                                    return false;
+                                case "Ver Pedidos":
+                                    Fragment f2 = VerPedidosFragment.newInstance("Ver Pedidos");
+                                    getSupportFragmentManager().beginTransaction().replace(R.id.crossfade_content,f2).commit();
+                                    return false;
+                            }
                         }
                         return false;
                     }
